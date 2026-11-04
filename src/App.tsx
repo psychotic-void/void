@@ -24,6 +24,7 @@ import {
   LifeBuoy,
   Link as LinkIcon,
   Trash2,
+  Check,
 } from "lucide-react";
 import logo from "./assets/logo.png";
 import cs2Logo from "./assets/games/cs2.png";
