@@ -9,7 +9,17 @@ import {
   Flame,
   Check,
   Zap,
+  Crosshair,
+  Hammer,
+  Gamepad2,
 } from "lucide-react";
+import logo from "./assets/logo.png";
+import cs2Logo from "./assets/games/cs2.png";
+import dotaLogo from "./assets/games/dota.png";
+import valorantLogo from "./assets/games/valorant.png";
+import apexLogo from "./assets/games/apex.png";
+import rustLogo from "./assets/games/rust.png";
+import minecraftLogo from "./assets/games/minecraft.png";
 import "./App.css";
 
 type Player = {
@@ -20,12 +30,85 @@ type Player = {
   roles: string[];
   bio: string;
   online: boolean;
-  avatar: string;
   vibe: string;
 };
 
-const GAMES = ["Все игры", "CS2", "Dota 2", "Valorant", "Apex", "Rust"];
-const ROLES = ["Entry", "IGL", "Support", "Sniper", "Roamer"];
+const GAMES = ["Все игры", "CS2", "Dota 2", "Valorant", "Apex", "Rust", "Minecraft"];
+const ROLES = ["Entry", "IGL", "Support", "Sniper", "Roamer", "Builder"];
+
+const GAME_LOGOS: Record<string, string> = {
+  CS2: cs2Logo,
+  "Dota 2": dotaLogo,
+  Valorant: valorantLogo,
+  Apex: apexLogo,
+  Rust: rustLogo,
+  Minecraft: minecraftLogo,
+};
+
+const GAME_ICONS: Record<string, typeof Swords> = {
+  CS2: Swords,
+  "Dota 2": Flame,
+  Valorant: Crosshair,
+  Apex: Zap,
+  Rust: Hammer,
+};
+
+function GameLogo({ game, size = 18 }: { game: string; size?: number }) {
+  const src = GAME_LOGOS[game];
+  if (!src) return <Gamepad2 size={size} strokeWidth={1.6} />;
+  return (
+    <img
+      src={src}
+      alt={game}
+      className="gs-game-logo"
+      style={{ width: size, height: size }}
+      loading="lazy"
+    />
+  );
+}
+
+function GameChip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className="gs-chip-btn gs-chip-game"
+      data-active={active ? "true" : "false"}
+      onClick={onClick}
+    >
+      <GameLogo game={label} size={18} />
+      {label}
+    </button>
+  );
+}
+
+function GameAvatar({ game, size = 56 }: { game: string; size?: number }) {
+  const Icon = GAME_ICONS[game] ?? Gamepad2;
+  const src = GAME_LOGOS[game];
+  return (
+    <span
+      className="gs-ava-ph"
+      style={{ width: size, height: size, borderRadius: size / 4 }}
+      aria-hidden
+    >
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          style={{ width: size * 0.6, height: size * 0.6, objectFit: "contain" }}
+        />
+      ) : (
+        <Icon size={size * 0.42} strokeWidth={1.6} />
+      )}
+    </span>
+  );
+}
 
 const PLAYERS: Player[] = [
   {
@@ -36,7 +119,6 @@ const PLAYERS: Player[] = [
     roles: ["Entry", "AWP"],
     bio: "Играю ночами, ору в микрофон, тащу раунды. Ищу состав для ESEA.",
     online: true,
-    avatar: "https://picsum.photos/seed/voidslut/200/200",
     vibe: "агрессивно",
   },
   {
@@ -47,7 +129,6 @@ const PLAYERS: Player[] = [
     roles: ["Support", "Roamer"],
     bio: "Спокойный саппорт, ставлю варды, не токсичу. Микрофон обязателен.",
     online: true,
-    avatar: "https://picsum.photos/seed/kisel/200/200",
     vibe: "спокойно",
   },
   {
@@ -58,7 +139,6 @@ const PLAYERS: Player[] = [
     roles: ["Sniper", "IGL"],
     bio: "Коллю, дёргаю, читаю игру. Ищу двух человек на вечерние катки.",
     online: false,
-    avatar: "https://picsum.photos/seed/grimmm/200/200",
     vibe: "холодно",
   },
   {
@@ -69,7 +149,6 @@ const PLAYERS: Player[] = [
     roles: ["Fragger", "Scout"],
     bio: "Пушу всё, что двигается. Люблю рвать отряды и портить статистику.",
     online: true,
-    avatar: "https://picsum.photos/seed/sashaoxi/200/200",
     vibe: "хаотично",
   },
   {
@@ -80,7 +159,6 @@ const PLAYERS: Player[] = [
     roles: ["Builder", "Farmer"],
     bio: "Строю базу, фармлю серу, сижу в засаде. Рейд-тим приветствуется.",
     online: false,
-    avatar: "https://picsum.photos/seed/m0ld/200/200",
     vibe: "упорото",
   },
   {
@@ -91,8 +169,27 @@ const PLAYERS: Player[] = [
     roles: ["IGL", "Support"],
     bio: "Знаю все смоки, веду раунды спокойным голосом. Без драмы.",
     online: true,
-    avatar: "https://picsum.photos/seed/toxicnun/200/200",
     vibe: "по делу",
+  },
+  {
+    id: "p7",
+    nick: "creeper_king",
+    game: "Minecraft",
+    rank: "3k hours",
+    roles: ["Builder", "Farmer"],
+    bio: "Строю мега-базу в выживании, играю на хардкоре. Ищу народ на сервер.",
+    online: true,
+    vibe: "медленно",
+  },
+  {
+    id: "p8",
+    nick: "bedwars_god",
+    game: "Minecraft",
+    rank: "Bedwars 340★",
+    roles: ["Entry", "IGL"],
+    bio: "Бедварс, скайварс, pvp 1.8. Ломаю кровати и нервы. Мик обязателен.",
+    online: false,
+    vibe: "дерзко",
   },
 ];
 
@@ -126,12 +223,15 @@ function Card({ player, mine, onEdit }: { player: Player; mine?: boolean; onEdit
   const p = player;
 
   return (
-    <article className="gs-card" data-mine={mine ? "true" : "false"}>
+    <article
+      className="gs-card bg-zinc-900 hover:border-purple-500"
+      data-mine={mine ? "true" : "false"}
+    >
       <span className="gs-watermark">{p.game.slice(0, 2).toUpperCase()}</span>
 
       <div className="gs-card-top">
         <div className="gs-ava">
-          <img src={p.avatar} alt={p.nick} />
+          <GameAvatar game={p.game} />
           <span className="gs-dot" data-on={p.online ? "true" : "false"} />
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
@@ -195,7 +295,6 @@ export default function App() {
     roles: ["IGL"],
     bio: "Пара строк о себе — стиль игры, время онлайна, чего ищешь.",
     online: true,
-    avatar: "https://picsum.photos/seed/mygrungyface/200/200",
     vibe: "резко",
   });
   const [draft, setDraft] = useState<Player>(me);
@@ -248,7 +347,7 @@ export default function App() {
   const pickField = (patch: Partial<Player>) => setDraft({ ...draft, ...patch });
 
   return (
-    <div className="gs">
+    <div className="gs bg-black">
       <div className="gs-noise" aria-hidden />
       <div className="gs-glow" aria-hidden>
         <i />
@@ -259,12 +358,10 @@ export default function App() {
         <header className="gs-header">
           <div className="gs-brand">
             <div className="gs-logo">
-              <Swords size={20} />
+              <img src={logo} alt="VOID" />
             </div>
             <div>
-              <h1 className="gs-display">
-                GRUNGE<span>SQUAD</span>
-              </h1>
+              <h1 className="gs-display">VOID</h1>
               <small>поиск тиммейтов · 2:47 am</small>
             </div>
           </div>
@@ -272,7 +369,11 @@ export default function App() {
             <span className="gs-online">
               <b /> online 1248
             </span>
-            <button className="gs-btn gs-btn-sm" style={{ border: "1px solid var(--line-2)", background: "#1b1526", color: "#cbbfe0" }} onClick={openProfile}>
+            <button
+              className="gs-btn gs-btn-sm"
+              style={{ border: "1px solid var(--line-2)", background: "#1b1526", color: "#cbbfe0" }}
+              onClick={openProfile}
+            >
               <UserRound size={16} />
               <span style={{ textTransform: "none", letterSpacing: "0.04em" }}>{me.nick}</span>
             </button>
@@ -289,15 +390,18 @@ export default function App() {
             <em>Или проиграй</em> в одиночку.
           </h2>
           <p>
-            Тёмная доска объявлений для тех, кто тащит ночью. Без вежливости и
-            розовых поней — только ранг, роли и голос.
+            Тёмная доска объявлений для тех, кто тащит ночью. Без вежливости и розовых поней —
+            только ранг, роли и голос.
           </p>
 
           <div className="gs-actions">
-            <button className="gs-btn gs-btn-primary" onClick={() => setShowMatch(true)}>
+            <button
+              className="gs-btn gs-btn-primary border-purple-500"
+              onClick={() => setShowMatch(true)}
+            >
               <Users size={16} /> Найти тиммейта
             </button>
-            <button className="gs-btn gs-btn-ghost" onClick={openProfile}>
+            <button className="gs-btn gs-btn-ghost border-purple-500" onClick={openProfile}>
               <UserRound size={16} /> Моя анкета
             </button>
             <button
@@ -315,14 +419,7 @@ export default function App() {
         <div className="gs-toolbar">
           <div className="gs-chips">
             {GAMES.map((g) => (
-              <button
-                key={g}
-                className="gs-chip-btn"
-                data-active={g === game ? "true" : "false"}
-                onClick={() => setGame(g)}
-              >
-                {g}
-              </button>
+              <GameChip key={g} label={g} active={g === game} onClick={() => setGame(g)} />
             ))}
           </div>
           <div className="gs-search-row">
@@ -378,22 +475,34 @@ export default function App() {
 
         <footer className="gs-footer">
           <span className="brand">
-            grunge<b>squad</b>
+            vo<b>id</b>
           </span>
           <span>играй громко · спи потом</span>
         </footer>
       </div>
 
       {showProfile && (
-        <Sheet title="Моя анкета" subtitle="то, что увидят другие" onClose={() => setShowProfile(false)}>
+        <Sheet
+          title="Моя анкета"
+          subtitle="то, что увидят другие"
+          onClose={() => setShowProfile(false)}
+        >
           <div className="gs-two">
             <label className="gs-field">
               <span>ник</span>
-              <input className="gs-input" value={draft.nick} onChange={(e) => pickField({ nick: e.target.value })} />
+              <input
+                className="gs-input"
+                value={draft.nick}
+                onChange={(e) => pickField({ nick: e.target.value })}
+              />
             </label>
             <label className="gs-field">
               <span>ранг</span>
-              <input className="gs-input" value={draft.rank} onChange={(e) => pickField({ rank: e.target.value })} />
+              <input
+                className="gs-input"
+                value={draft.rank}
+                onChange={(e) => pickField({ rank: e.target.value })}
+              />
             </label>
           </div>
 
@@ -401,14 +510,12 @@ export default function App() {
             <span>игра</span>
             <div className="gs-chips">
               {GAMES.slice(1).map((g) => (
-                <button
+                <GameChip
                   key={g}
-                  className="gs-chip-btn"
-                  data-active={draft.game === g ? "true" : "false"}
+                  label={g}
+                  active={draft.game === g}
                   onClick={() => pickField({ game: g })}
-                >
-                  {g}
-                </button>
+                />
               ))}
             </div>
           </div>
@@ -424,7 +531,9 @@ export default function App() {
                     className="gs-chip-btn"
                     data-active={on ? "true" : "false"}
                     onClick={() =>
-                      pickField({ roles: on ? draft.roles.filter((x) => x !== r) : [...draft.roles, r] })
+                      pickField({
+                        roles: on ? draft.roles.filter((x) => x !== r) : [...draft.roles, r],
+                      })
                     }
                     style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                   >
@@ -476,7 +585,11 @@ export default function App() {
       )}
 
       {showUser && (
-        <Sheet title="Найти пользователя" subtitle="ник, игра или ранг" onClose={() => setShowUser(false)}>
+        <Sheet
+          title="Найти пользователя"
+          subtitle="ник, игра или ранг"
+          onClose={() => setShowUser(false)}
+        >
           <div className="gs-search" style={{ width: "100%", marginBottom: 16 }}>
             <Search size={16} />
             <input
@@ -495,7 +608,7 @@ export default function App() {
 
           {foundUsers.map((u) => (
             <div key={u.id} className="gs-result">
-              <img src={u.avatar} alt={u.nick} />
+              <GameAvatar game={u.game} size={40} />
               <div style={{ minWidth: 0, flex: 1 }}>
                 <p className="n">
                   {u.nick}
@@ -514,38 +627,29 @@ export default function App() {
       )}
 
       {showMatch && (
-        <Sheet title="Найти тиммейта" subtitle="быстрый подбор по игре" onClose={() => setShowMatch(false)}>
+        <Sheet
+          title="Найти тиммейта"
+          subtitle="быстрый подбор по игре"
+          onClose={() => setShowMatch(false)}
+        >
           <div className="gs-chips">
             {GAMES.slice(1).map((g) => (
-              <button
+              <GameChip
                 key={g}
-                className="gs-chip-btn"
-                data-active={matchGame === g ? "true" : "false"}
+                label={g}
+                active={matchGame === g}
                 onClick={() => setMatchGame(g)}
-              >
-                {g}
-              </button>
+              />
             ))}
           </div>
 
-          <p
-            style={{
-              margin: "20px 0 10px",
-              fontFamily: "JetBrains Mono, monospace",
-              fontSize: 10,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "var(--muted)",
-            }}
-          >
-            подобрано: {matches.length}
-          </p>
+          <p className="gs-subhead">подобрано: {matches.length}</p>
 
           {matches.length === 0 && <p className="gs-hint">по этой игре пока никого — зайди позже</p>}
 
           {matches.map((m) => (
             <div key={m.id} className="gs-result">
-              <img src={m.avatar} alt={m.nick} />
+              <GameAvatar game={m.game} size={40} />
               <div style={{ minWidth: 0, flex: 1 }}>
                 <p className="n">{m.nick}</p>
                 <p className="m">
