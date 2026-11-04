@@ -1,4 +1,4 @@
-/* ===== GRUNGE SQUAD — dark grunge theme ===== */
+/* ===== VOID — dark grunge theme ===== */
 @import url("https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap");
 
 html,
@@ -473,3 +473,58 @@ body,
 .gs-result .n b { border-radius: 4px; background: var(--accent); color: #150f1f; padding: 1px 5px; font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; }
 .gs-result .m { margin: 2px 0 0; font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .gs-hint { border: 1px dashed var(--line-2); background: var(--panel-2); border-radius: 12px; padding: 24px 16px; text-align: center; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+.gs-owner-badge {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(168, 85, 247, 0.6); /* Фиолетовая рамка */
+  color: #fff;
+  /* Градиент для переливания (фиолетовый) */
+  background: linear-gradient(90deg, #a855f7, #d8b4fe, #a855f7);
+  background-size: 200% auto;
+  animation: shine 3s linear infinite, pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(168, 85, 247, 1), 0 0 40px rgba(168, 85, 247, 0.6); }
+  100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4); }
+}
+.gs-logo-rainbow {
+  background: linear-gradient(90deg, #a855f7, #e9d5ff, #a855f7);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine-text 3s linear infinite;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+@keyframes shine-text {
+  to { background-position: 200% center; }
+}/* Убираем черный фон при выделении, делаем сами буквы фиолетовыми */
+::selection {
+  background-color: transparent !important; /* Прозрачный фон */
+  color: #c084fc !important; /* Фиолетовый цвет самих букв (purple-400) */
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.8) !important; /* Легкое свечение для красоты */
+}
+
+::-moz-selection {
+  background-color: transparent !important;
+  color: #c084fc !important;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.8) !important;
+}
+
+/* Применяем ко всем элементам на сайте */
+*::selection {
+  background-color: transparent !important;
+  color: #c084fc !important;
+}
